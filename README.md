@@ -1,8 +1,8 @@
-# photoserver
+# Photoserver
 Home server for storing photos and other types of documents
 
 ## Continuous Development
-I decided to follow some rules for enabling the power of continuous development principles as described in Continuous Delivery Pipelines by Dave Farley. So here are some steps to set up things to make the CD work
+I decided to follow some rules for enabling the power of continuous development principles as described in [Continuous Delivery Pipelines by Dave Farley](https://www.amazon.com/dp/B096YGZVZ9). So here are some steps to set up things to make the CD work
 
 ### Version Control
 Version control in use is git provided by GitHub.
@@ -35,6 +35,12 @@ finally run some puppeteer test like the 'example.js'
 `node example.js`
 
 For this file the require must be set to see the puppeteer package or the file should be copied to ..nodeenv/puppeteer folder and `require('puppeteer');` should work.
+
+To run puppeteer from anywhere (outside virtualenv) a special shell script must be used. There is the 'run-puppeteer.sh' in the puppeteer folder to use as a basic idea.
+
+### Build Management System
+I chose [Jenkins](https://www.jenkins.io/) as automation server based on some tips from Dave Farley's book. For now I installed it on my local machine to have access to other parts of CD pipeline.
+
 
 
 
