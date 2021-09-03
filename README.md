@@ -30,5 +30,12 @@ install puppeteer following the get-started page
 
 `npm i puppeteer`
 
+finally run some puppeteer test like the 'example.js'
+
+`node example.js`
+
+For this file the require must be set to see the puppeteer package or the file should be copied to ..nodeenv/puppeteer folder and `require('puppeteer');` should work.
+
+
 
 
