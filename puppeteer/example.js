@@ -18,4 +18,8 @@ let out_file = wdir + '/puppeteer/example.png';
   await page.screenshot({ path: out_file });
 
   await browser.close();
+
+  process.exit(1);
+  
 })();
+
