@@ -1,7 +1,7 @@
 # Photoserver
 Home server for storing photos and other types of documents
 
-## Continuous Development
+## Continuous Delivery
 I decided to follow some rules for enabling the power of continuous development principles as described in [Continuous Delivery Pipelines by Dave Farley](https://www.amazon.com/dp/B096YGZVZ9). So here are some steps to set up things to make the CD work
 
 ### Version Control
