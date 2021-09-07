@@ -42,6 +42,9 @@ To run puppeteer from anywhere (outside virtualenv) a special shell script must 
 I chose [Jenkins](https://www.jenkins.io/) as automation server based on some tips from Dave Farley's book. For now I installed it on my local machine to have access to other parts of CD pipeline.
 
 
+## GitLab
+I tried to run gitlab in docker to try it out. After trying I decided not to use it and go with public or private github repositories with jenkins as automation, puppeteer as ui testing and other testing as needed all integrated in a customized docker image.
+
 
 
 
