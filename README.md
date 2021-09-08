@@ -41,6 +41,11 @@ To run puppeteer from anywhere (outside virtualenv) a special shell script must 
 ### Build Management System
 I chose [Jenkins](https://www.jenkins.io/) as automation server based on some tips from Dave Farley's book. For now I installed it on my local machine to have access to other parts of CD pipeline.
 
+Later I worked on automating the test environment setup as described in the article [How To Automate Jenkins Setup with Docker and Jenkins Configuration as Code](https://www.digitalocean.com/community/tutorials/how-to-automate-jenkins-setup-with-docker-and-jenkins-configuration-as-code). Unfortunately the docker build command did not work for some permission issues. 
+
+The solution was to set up a docker in docker ([Docker in Docker](https://itnext.io/docker-in-docker-521958d34efd)). After starting docker in docker with `docker run -ti -v /var/run/docker.sock:/var/run/docker.sock docker` the above build command worked.
+
+To run the just created jenkins:jcasc docker image use os not the docker-in-docker: `docker run --name jenkins --rm -p 8080:8080 jenkins:jcasc`
 
 ## GitLab
 I tried to run gitlab in docker to try it out. After trying I decided not to use it and go with public or private github repositories with jenkins as automation, puppeteer as ui testing and other testing as needed all integrated in a customized docker image.
