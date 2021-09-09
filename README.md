@@ -43,9 +43,9 @@ I chose [Jenkins](https://www.jenkins.io/) as automation server based on some ti
 
 Later I worked on automating the test environment setup as described in the article [How To Automate Jenkins Setup with Docker and Jenkins Configuration as Code](https://www.digitalocean.com/community/tutorials/how-to-automate-jenkins-setup-with-docker-and-jenkins-configuration-as-code). Unfortunately the docker build command did not work for some permission issues. 
 
-The solution was to set up a docker in docker ([Docker in Docker](https://itnext.io/docker-in-docker-521958d34efd)). After starting docker in docker with `docker run -ti -v /var/run/docker.sock:/var/run/docker.sock docker` the above build command worked.
+The solution was to set up a docker in docker ([Docker in Docker](https://itnext.io/docker-in-docker-521958d34efd)). After starting docker in docker with `docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock -v /absolute/path/to/jcasc-folder:/jcasc docker` the above build command worked.
 
-To run the just created jenkins:jcasc docker image use os not the docker-in-docker: `docker run --name jenkins --rm -p 8080:8080 jenkins:jcasc`
+To run the just created jenkins:jcasc docker image use os not the docker-in-docker: `docker run --name jenkins --rm -p 8080:8080 jenkins:jcasc`. To mount external jenkins_home folder use `docker run -v /media/data/projects/gkusnir/photoserver/jenkins_home:/var/jenkins_home --name jenkins --rm -p 8080:8080 jenkins:jcasc`. This way the jenkins_home folder can be backed up after the container is stopped and even removed.
 
 ## GitLab
 I tried to run gitlab in docker to try it out. After trying I decided not to use it and go with public or private github repositories with jenkins as automation, puppeteer as ui testing and other testing as needed all integrated in a customized docker image.

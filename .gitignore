@@ -2,3 +2,4 @@ puppeteer/example.png
 .jenkins
 symlinks
 gitlab/data
+jenkins_home
