@@ -1,15 +1,15 @@
 jenkins:
   securityRealm:
-    local:
-      allowsSignup: false
-      users:
-       - id: ${JENKINS_ADMIN_ID}
-         password: ${JENKINS_ADMIN_PASSWORD}
+    github:
+      clientID: "32a1d21f0de4e551cf80"
+      clientSecret: "1027582e27db8ed74833f6af232cb3d42c64ca89"
+      githubApiUri: "https://api.github.com"
+      githubWebUri: "https://github.com"
+      oauthScopes: "read:org,user:email,repo"
   authorizationStrategy:
     globalMatrix:
       permissions:
-        - "Overall/Administer:admin"
-        - "Overall/Read:authenticated"
+        - "Overall/Administer:gkusnir"
   remotingSecurity:
     enabled: true
 security:
@@ -19,4 +19,5 @@ security:
         strategy: triggeringUsersAuthorizationStrategy
 unclassified:
   location:
-    url: http://127.0.01:8080/
+    url: http://127.0.0.1:8080/
+
