@@ -1,6 +1,6 @@
-#! /bin/sh
+#! /bin/bash
 
-echo Installing 2FA with Google Authenticator PAM module
+echo "Installing 2FA with Google Authenticator PAM module"
 
 # check if root
 if [[ "$EUID" -ne 0 ]]; then
@@ -8,7 +8,30 @@ if [[ "$EUID" -ne 0 ]]; then
     exit 1
 fi
 
-# install 
-#sudo apt install libpam-google-authenticator
+EXGROUP=no2fa
+COPYUSER=copyuser
+COPYUSERPASS=$1
 
-echo Tou are there
+# check password exists
+...
+
+# install 
+apt install -y libpam-google-authenticator
+
+# add exception group
+groupadd $EXGROUP
+
+# add copyuser to enable file copy automation
+useradd $COPYUSER
+usermod -a -G $EXGROUP $COPYUSER
+
+# set copyuser password
+
+# modify /etc/pam.d/sshd
+
+# modify /etc/ssh/sshd_config
+
+# run and config google-authenticator
+
+# restart sshd service
+systemctl restart sshd.service
