@@ -35,3 +35,9 @@ usermod -a -G $EXGROUP $COPYUSER
 
 # restart sshd service
 systemctl restart sshd.service
+
+# install docker 
+# enable docker and container services
+
+# handle github secret
+

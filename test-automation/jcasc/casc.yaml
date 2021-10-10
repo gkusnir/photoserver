@@ -20,5 +20,6 @@ security:
         strategy: triggeringUsersAuthorizationStrategy
 unclassified:
   location:
-    url: http://127.0.0.1:8080/
+    adminAddress: "admin@napadovisko.sk"
+    url: "https://jenkins.napadovisko.sk/"
 

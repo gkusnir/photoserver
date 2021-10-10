@@ -1,0 +1,28 @@
+version: "3"
+services:
+  jenkins:
+    image: "jenkins:jcasc"
+    volumes:
+      - "jenkins_home:/var/jenkins_home"
+    restart: always
+    container_name: "jenkins"
+    ports:
+      - "50000:50000"
+  nginx:
+    image: jonasal/nginx-certbot:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - CERTBOT_EMAIL=certbot@napadovisko.sk
+      - STAGING=0
+      - RENEWAL_INTERVAL=1d
+    volumes:
+      - "./nginx//nginx_secrets:/etc/letsencrypt"
+      - "./nginx/user_conf.d:/etc/nginx/user_conf.d:ro"
+    container_name: nginx-certbot
+    restart: always
+
+volumes:
+  jenkins_home:
+
