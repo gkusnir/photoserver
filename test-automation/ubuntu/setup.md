@@ -13,6 +13,7 @@ Follow this tutorial: https://docs.docker.com/engine/install/ubuntu/.
 
 For docker-compose follow this one: https://docs.docker.com/compose/install/.
 
+
 ## Two Factor Authentication
 
 To provide state of the art security on remote machine with ssh exposed on the internet we install Two Factor Auth with Google-Authenticator and set key-based authentication.
@@ -243,5 +244,6 @@ session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_
 
 ### Sources
 - https://lukems.com/en/install-jenkins-and-nginx-with-docker-compose/
+- https://www.digitalocean.com/community/tutorials/how-to-configure-nginx-with-ssl-as-a-reverse-proxy-for-jenkins
 
 Localhost or 127.0.0.1 is not defined within container. Docker network defines hosts and the nginx reverse proxy muste refer to the jenkins server as 'jenkins' - the name of the service in docker compose.

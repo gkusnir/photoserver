@@ -4,3 +4,4 @@ symlinks
 gitlab/data
 jenkins_home
 test-automation/vm.napadovisko.sk-copyuser.pass.txt
+test-automation/secrets
