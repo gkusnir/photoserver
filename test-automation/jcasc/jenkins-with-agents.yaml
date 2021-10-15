@@ -1,0 +1,164 @@
+credentials:
+  system:
+    domainCredentials:
+    - credentials:
+      - basicSSHUserPrivateKey:
+          id: "azure-docker-agent1"
+          passphrase: "{AQAAABAAAAAgdSps3O5aCiBHv/bvNW4i+7hqmksgXrNRulCa3gJmAJwm+66u+tqJCXkecxSyASNO}"
+          privateKeySource:
+            directEntry:
+              privateKey: "{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}"
+          scope: GLOBAL
+          username: "jenkins"
+jenkins:
+  agentProtocols:
+  - "JNLP4-connect"
+  - "Ping"
+  authorizationStrategy:
+    globalMatrix:
+      permissions:
+      - "Overall/Administer:gkusnir"
+      - "Overall/Administer:xtp00001"
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false
+  disableRememberMe: false
+  labelAtoms:
+  - name: "agent1"
+  - name: "agent2"
+  - name: "azure-docker-agent1"
+  - name: "built-in"
+  - name: "windows"
+  - name: "windows-agent2"
+  markupFormatter: "plainText"
+  mode: NORMAL
+  myViewsTabBar: "standard"
+  nodes:
+  - permanent:
+      labelString: "agent1"
+      launcher:
+        ssh:
+          credentialsId: "azure-docker-agent1"
+          host: "azure.napadovisko.sk"
+          javaPath: "/opt/java/openjdk/bin/java"
+          port: 10022
+          sshHostKeyVerificationStrategy:
+            manuallyTrustedKeyVerificationStrategy:
+              requireInitialManualTrust: false
+      mode: EXCLUSIVE
+      name: "azure-docker-agent1"
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "agent2 windows"
+      launcher:
+        jnlp:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "windows-agent2"
+      remoteFS: "c:\\jenkins"
+      retentionStrategy: "always"
+  numExecutors: 0
+  primaryView:
+    all:
+      name: "all"
+  projectNamingStrategy: "standard"
+  quietPeriod: 5
+  remotingSecurity:
+    enabled: true
+  scmCheckoutRetryCount: 0
+  securityRealm:
+    github:
+      clientID: "32a1d21f0de4e551cf80"
+      clientSecret: "{AQAAABAAAAAw+7+RBIGA0yOZ39wBaUb+2d4PY//bNgC2dcxO8EUxkRssXSHQWjxoMhr7Jkm9Hf10501rdmKI+1dJXWr/fRwUfw==}"
+      githubApiUri: "https://api.github.com"
+      githubWebUri: "https://github.com"
+      oauthScopes: "read:org,user:email,repo"
+  slaveAgentPort: 50000
+  updateCenter:
+    sites:
+    - id: "default"
+      url: "https://updates.jenkins.io/update-center.json"
+  views:
+  - all:
+      name: "all"
+  viewsTabBar: "standard"
+security:
+  apiToken:
+    creationOfLegacyTokenEnabled: false
+    tokenGenerationOnCreationEnabled: false
+    usageStatisticsEnabled: true
+  queueItemAuthenticator:
+    authenticators:
+    - global:
+        strategy: "triggeringUsersAuthorizationStrategy"
+  sSHD:
+    port: -1
+unclassified:
+  buildDiscarders:
+    configuredBuildDiscarders:
+    - "jobBuildDiscarder"
+  buildStepOperation:
+    enabled: false
+  email-ext:
+    adminRequiredForTemplateTesting: false
+    allowUnregisteredEnabled: false
+    charset: "UTF-8"
+    debugMode: false
+    defaultBody: |-
+      $PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:
+
+      Check console output at $BUILD_URL to view the results.
+    defaultSubject: "$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!"
+    defaultTriggerIds:
+    - "hudson.plugins.emailext.plugins.trigger.FailureTrigger"
+    maxAttachmentSize: -1
+    maxAttachmentSizeMb: -1
+    precedenceBulk: false
+    watchingEnabled: false
+  fingerprints:
+    fingerprintCleanupDisabled: false
+    storage: "file"
+  gitHubConfiguration:
+    apiRateLimitChecker: ThrottleForNormalize
+  gitHubPluginConfig:
+    hookUrl: "https://jenkins.napadovisko.sk/github-webhook/"
+  gitSCM:
+    addGitTagAction: false
+    allowSecondFetch: false
+    createAccountBasedOnEmail: false
+    disableGitToolChooser: false
+    hideCredentials: false
+    showEntireCommitSummaryInChanges: false
+    useExistingAccountWithSameEmail: false
+  junitTestResultStorage:
+    storage: "file"
+  location:
+    adminAddress: "admin@napadovisko.sk"
+    url: "https://jenkins.napadovisko.sk/"
+  mailer:
+    charset: "UTF-8"
+    useSsl: false
+    useTls: false
+  pollSCM:
+    pollingThreadCount: 10
+  timestamper:
+    allPipelines: false
+    elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
+    systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
+tool:
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"
+  powerShellInstallation:
+    installations:
+    - home: "powershell.exe"
+      name: "DefaultWindows"
+    - home: "pwsh"
+      name: "DefaultLinux"

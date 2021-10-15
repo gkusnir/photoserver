@@ -21,3 +21,4 @@ ws-cleanup:latest
 locale:1.4
 authorize-project:latest
 github-oauth:latest
+powershell:latest
