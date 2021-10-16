@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "jasmine": "^3.10.0",
+    "request": "^2.88.2"
+  },
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "http": "^0.0.1-security"
+  }
+}
