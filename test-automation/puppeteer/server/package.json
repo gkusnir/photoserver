@@ -1,10 +1,12 @@
 {
   "devDependencies": {
+    "delay": "^5.0.0",
     "jasmine": "^3.10.0",
     "request": "^2.88.2"
   },
   "dependencies": {
     "child_process": "^1.0.2",
-    "http": "^0.0.1-security"
+    "http": "^0.0.1-security",
+    "http-shutdown": "^1.2.2"
   }
 }

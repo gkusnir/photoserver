@@ -1,20 +1,27 @@
 const server = require("../server.js");
 const request = require("request");
 
-let srv = server.startServer();
+const PORT = 8001;
 
 describe("server.js", function() {
-    it("should start web server on localhost:8000", function() {
-        expect(srv).toBeDefined();
-    });
-});
+    let srv;
 
-req = request.get("http://localhost:8000", function(res) {
-    describe("server", ()=>{
-        it("should serve a page with statuscode 200", ()=>{
-            expect(res.statusCode).toEqual(200);
+    it(`should start web server on localhost:${PORT}`, function(done) {
+        srv = server.startServer({port:PORT}, ()=>{
+            expect(srv).toBeDefined();
+            expect(srv.listening).toBe(true);
+            done();
         });
     });
-});
 
+    it("should return a web page", (done)=>{
+        req = request(`http://localhost:${PORT}`, {}, (err,res,body)=>{
+            //console.log(res);
+            expect(res.statusCode).toBe(200);
+            done();
+        });
+
+    });
+
+});
 
