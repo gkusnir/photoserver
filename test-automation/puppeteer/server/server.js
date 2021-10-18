@@ -11,6 +11,7 @@
     https://riptutorial.com/jasmine
     https://stackoverflow.com/a/67596281/5802615
     https://jasmine.github.io/1.3/introduction.html#section-Asynchronous_Support
+    https://www.twilio.com/blog/2017/08/http-requests-in-node-js.html
 
 */
 
@@ -26,7 +27,8 @@ let settings = {
             res.writeHead(200);
             res.end("server is running at "+ settings.host + ":" + settings.port);
         },
-    running: false
+    running: false,
+    writeToConsole: false,
 };
 
 function runScript(scriptPath, callback) {
@@ -64,14 +66,14 @@ function startServer(config = {}, callback) {
     settings.server = require('http-shutdown')(settings.server);
     settings.running = true;
     settings.server.listen(settings.port, settings.host, () => {
-        console.log(`Server is running on http://${settings.host}:${settings.port}`);
+        if (settings.writeToConsole) console.log(`Server is running on http://${settings.host}:${settings.port}`);
         try{ callback(); } catch {}
     });
     return settings.server;
 }
 
 function stopServer(callback) {
-    console.log(`Stopping server running on http://${settings.host}:${settings.port}`);
+    if (settings.writeToConsole) console.log(`Stopping server running on http://${settings.host}:${settings.port}`);
     settings.server.shutdown((err)=>{
         settings.running = false;
         try{ callback(err); } catch {}
@@ -92,5 +94,5 @@ module.exports = {
 };
 
 if (typeof require !== 'undefined' && require.main === module) {
-    startServer();
+    startServer({writeToConsole: true});
 }
