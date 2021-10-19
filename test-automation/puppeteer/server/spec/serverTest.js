@@ -7,12 +7,12 @@ const PORT = 8001;
 const API_TESTS = [
     {
         path: "/api/version", 
-        type: matchers.TYPES.json,
-        match: matchers.MATCHES.members_and_value_types, 
-        expect: {version: "1.0"},
+        expect: {version: "0.1"},
     }
     //["/api/tasklist", {tasklist: []}]
 ];
+
+matchers.injectMatchers();
 
 describe("server.js", function() {
     let srv;
@@ -34,18 +34,6 @@ describe("server.js", function() {
     });
 
 
-    it("should return a web page", (done)=>{
-        req = request.get(`http://localhost:${PORT}`, (res)=>{
-            expect(res.statusCode).toBe(200);
-            let data = '';
-            res.on("data",(chunk)=>{ data += chunk; });
-            res.on("end", ()=>{
-                expect(data).toBeInstanceOf(String);
-                done();
-            });
-        });
-    });
-
     // testing api calls
 
     API_TESTS.forEach(test => {
@@ -56,8 +44,10 @@ describe("server.js", function() {
                 res.on("data",(chunk)=>{ data += chunk; });
                 res.on("end", ()=>{
                     expect(data).toBeInstanceOf(String);
-                    expect(matchers.match(test, data)).toBeTrue();
-                    
+                    expect(data).toBeOfType("json");
+                    let jsdata = JSON.parse(data);
+                    expect(jsdata).toHaveMembers(test.expect);
+                    expect(jsdata).toHaveValues(test.expect);
                     done();
                 });
             });

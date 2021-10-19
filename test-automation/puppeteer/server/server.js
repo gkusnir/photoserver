@@ -17,16 +17,18 @@
 
 const http = require("http");
 const childProcess = require('child_process');
+const requestListener = require("./server_api.js").requestListener;
 
 let settings = {
     host: 'localhost',
     port: 8000,
     server: null,
-    requestListener: 
+    /*requestListener: 
         function (req, res) {
             res.writeHead(200);
             res.end("server is running at "+ settings.host + ":" + settings.port);
-        },
+        },*/
+    requestListener: requestListener,
     running: false,
     writeToConsole: false,
 };

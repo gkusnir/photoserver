@@ -1,35 +1,73 @@
 function isJson(json) {
     try {
-        let d = JSON.decrypt(json);
+        let d = JSON.parse(json);
         return true;
     } catch {
         return false;
     }
 }
 
-const TYPES = {
-    json: 0,
+/*
+    valid MATCHes
+    type,typeonly - matches the type only
+    members - matches type and all the members of 'expected' must be present in 'actual'
+*/
 
-}
-
-const MATCHES = {
-    type: 0,
-    members: 1,
-    members_and_value_types: 2,
-    members_and_value_values: 3,
-}
-
-function match(test, value) {
-    switch (test.type) {
-        case TYPES.json:
-            return isJson(value);
-    }
-    return false;
+function injectMatchers() {
+    beforeEach(function(){
+        jasmine.addMatchers({
+            toBeOfType: function(){
+                return {
+                    compare: function(actual,expected) {
+                        switch(expected.toLowerCase()) {
+                            case "json":
+                                return {
+                                    pass: isJson(actual),
+                                    message: "not a json string "
+                                };
+                            default:
+                                return {
+                                    pass: false,
+                                    message: `unknown type '${expected}' `
+                                };
+                        }
+                    }
+                };
+            },
+            toHaveMembers: function(){
+                return {
+                    compare: function(actual,expected) {
+                        for (key in expected) {
+                            if (actual[key] === undefined) {
+                                return {
+                                    pass: false,
+                                    message: `missing key '${key}' `
+                                };
+                            }
+                            return {pass: true};
+                        }
+                    }
+                };
+            },
+            toHaveValues: function(){
+                return {
+                    compare: function(actual,expected) {
+                        for (key in expected) {
+                            if (actual[key] !== expected[key]) {
+                                return {
+                                    pass: false,
+                                    message: `value of '${key}' is different`
+                                };
+                            }
+                            return {pass: true};
+                        }
+                    }
+                };
+            }
+        });
+    });
 }
 
 module.exports = {
-    isJson: isJson,
-    TYPES: TYPES,
-    MATCHES: MATCHES,
-    match: match,
+    injectMatchers: injectMatchers,
 };
