@@ -18,6 +18,7 @@
 const http = require("http");
 const childProcess = require('child_process');
 const requestListener = require("./server_api.js").requestListener;
+let api_settings = require("./server_api.js").settings;
 
 let settings = {
     host: 'localhost',
@@ -31,7 +32,26 @@ let settings = {
     requestListener: requestListener,
     running: false,
     writeToConsole: false,
+    configFile: "server-config.json",
 };
+
+let transferSettingsKeys = [
+    "host",
+    "port",
+    "scriptPath",
+]
+
+function transferSettings() {
+    transferSettingsKeys.forEach(key => {
+        if (settings[key]) {
+            api_settings[key] = settings[key];
+        }
+    });
+}
+
+function getSettings() {
+    return Object.create(settings);
+}
 
 function runScript(scriptPath, callback) {
 
@@ -63,6 +83,8 @@ function runScript(scriptPath, callback) {
 });*/
 
 function startServer(config = {}, callback) {
+    configFromFile = require("./server-config.json");
+    settings = Object.assign(settings, configFromFile);
     settings = Object.assign(settings, config);
     settings.server = http.createServer(settings.requestListener);
     settings.server = require('http-shutdown')(settings.server);
@@ -71,6 +93,7 @@ function startServer(config = {}, callback) {
         if (settings.writeToConsole) console.log(`Server is running on http://${settings.host}:${settings.port}`);
         try{ callback(); } catch {}
     });
+    transferSettings();
     return settings.server;
 }
 
@@ -92,7 +115,8 @@ module.exports = {
     runScript: runScript,
     startServer: startServer,
     stopServer: stopServer,
-    isRunning: isRunning
+    isRunning: isRunning,
+    getSettings: getSettings
 };
 
 if (typeof require !== 'undefined' && require.main === module) {

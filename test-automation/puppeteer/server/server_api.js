@@ -19,6 +19,11 @@ function requestListener(req, res) {
                 name: settings.name || "server"
             }));
             return;
+        case "/api/settings":
+            res.setHeader('Content-Type', 'application/json');
+            res.writeHead(200);
+            res.end(JSON.stringify(settings));
+            return;
         default:
             res.writeHead(404);
             res.end("page not found");

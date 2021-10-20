@@ -8,6 +8,11 @@ const API_TESTS = [
     {
         path: "/api/version", 
         expect: {version: "0.1"},
+    },
+    {
+        path: "/api/settings", 
+        expectValues: {host: "localhost", port: PORT},
+        expectKeys: {scriptPath: ""}
     }
     //["/api/tasklist", {tasklist: []}]
 ];
@@ -46,8 +51,8 @@ describe("server.js", function() {
                     expect(data).toBeInstanceOf(String);
                     expect(data).toBeOfType("json");
                     let jsdata = JSON.parse(data);
-                    expect(jsdata).toHaveMembers(test.expect);
-                    expect(jsdata).toHaveValues(test.expect);
+                    expect(jsdata).toHaveMembers(test.expectKeys || test.expect);
+                    expect(jsdata).toHaveValues(test.expectValues || test.expect);
                     done();
                 });
             });
