@@ -6,6 +6,7 @@
   "dependencies": {
     "child_process": "^1.0.2",
     "http": "^0.0.1-security",
-    "http-shutdown": "^1.2.2"
+    "http-shutdown": "^1.2.2",
+    "request-target": "^1.0.2"
   }
 }

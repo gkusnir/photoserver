@@ -24,11 +24,6 @@ let settings = {
     host: 'localhost',
     port: 8000,
     server: null,
-    /*requestListener: 
-        function (req, res) {
-            res.writeHead(200);
-            res.end("server is running at "+ settings.host + ":" + settings.port);
-        },*/
     requestListener: requestListener,
     running: false,
     writeToConsole: false,

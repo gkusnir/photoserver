@@ -63,6 +63,27 @@ function injectMatchers() {
                         }
                     }
                 };
+            },
+            toBeList: function(){
+                return {
+                    compare: function(actual,expected) {
+                        if (!(!!actual && actual.constructor === Array)) {
+                            return {
+                                pass: false,
+                                message: `value is not an array `
+                            };
+                        }
+                        for (let item in expected) {
+                            if (!(actual.includes(expected[item]))) {
+                                return {
+                                    pass: false,
+                                    message: `value is different `
+                                };
+                            }
+                        }
+                        return {pass: true};
+                    }
+                };
             }
         });
     });

@@ -4,17 +4,32 @@ const matchers = require("./serverMatchers.js");
 
 const PORT = 8001;
 
+const SCRIPT_RUNS = {
+    "script-1-ok.js": {exitCode: 0},
+    "script-2-err.js": {exitCode: 1},
+    "script-3-ok-msg.js": {exitCode: 0, message: ""},
+    "script-4-ok-fail-msg.js": {exitCode: 0, message: "", result: "fail"},
+    "script-5-err-fail-msg.js": {},
+    "script-6-err-msg.js": {},
+};
+
+const SCRIPT_LIST = Object.keys(SCRIPT_RUNS);
+
 const API_TESTS = [
     {
-        path: "/api/version", 
+        path: "/api/version/?x=1",
         expect: {version: "0.1"},
     },
     {
-        path: "/api/settings", 
+        path: "/api/settings",
         expectValues: {host: "localhost", port: PORT},
         expectKeys: {scriptPath: ""}
-    }
-    //["/api/tasklist", {tasklist: []}]
+    },
+    {
+        path: "/api/scripts/list",
+        expectToBeList: SCRIPT_LIST,
+    },
+    
 ];
 
 matchers.injectMatchers();
@@ -51,8 +66,9 @@ describe("server.js", function() {
                     expect(data).toBeInstanceOf(String);
                     expect(data).toBeOfType("json");
                     let jsdata = JSON.parse(data);
-                    expect(jsdata).toHaveMembers(test.expectKeys || test.expect);
-                    expect(jsdata).toHaveValues(test.expectValues || test.expect);
+                    if (test.expectKeys || test.expect) expect(jsdata).toHaveMembers(test.expectKeys || test.expect);
+                    if (test.expectValues || test.expect) expect(jsdata).toHaveValues(test.expectValues || test.expect);
+                    if (test.expectToBeList) expect(jsdata).toBeList(test.expectToBeList);
                     done();
                 });
             });
@@ -61,6 +77,14 @@ describe("server.js", function() {
             });
         });
     });
+
+    // testing script running
+    const num_scripts_to_run = 3;
+    let scripts_to_run = {};
+
+
+
+
 
 
 });
