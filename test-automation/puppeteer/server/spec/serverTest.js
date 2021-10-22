@@ -29,6 +29,30 @@ const API_TESTS = [
         path: "/api/scripts/list",
         expectToBeList: SCRIPT_LIST,
     },
+    {
+        path: "/api/scripts/run",
+        expectValues: {status: "error"},
+        expectKeys: {status: "", error: ""}
+    },
+    {
+        path: "/api/scripts/run?script=",
+        expectValues: {status: "error"},
+        expectKeys: {status: "", error: ""}
+    },
+    {
+        path: "/api/scripts/run?file=script-1-ok.js",
+        expectValues: {status: "error"},
+        expectKeys: {status: "", error: ""}
+    },
+    {
+        path: "/api/scripts/run?script=nonexistent-file.js",
+        expectValues: {status: "error"},
+        expectKeys: {status: "", error: ""}
+    },
+    {
+        path: "/api/scripts/run?script=script-1-ok.js",
+        expectValues: {status: "ok"},
+    },
     
 ];
 
@@ -79,10 +103,47 @@ describe("server.js", function() {
     });
 
     // testing script running
-    const num_scripts_to_run = 3;
-    let scripts_to_run = {};
 
+    let script = SCRIPT_LIST[Math.floor(Math.random() * SCRIPT_LIST.length)];
 
+    /*it(`should run the script but not specify the script and wait for error `, (done) => {
+        req = request.get(`http://localhost:${PORT}/api/scripts/run`, (res)=>{
+            expect(res.statusCode).toBe(200);
+            let data = '';
+            res.on("data",(chunk)=>{ data += chunk; });
+            res.on("end", ()=>{
+                expect(data).toBeInstanceOf(String);
+                expect(data).toBeOfType("json");
+                let jsdata = JSON.parse(data);
+                expect(jsdata).toHaveMembers({status: "error", error: ""});
+                expect(jsdata).toHaveValues({status: "error"});
+                done();
+            });
+        });
+        req.on("error", err=>{
+            done.fail(err);
+        });
+    });*/
+
+    /*it(`should run the script '${script}' and wait for result `, (done) => {
+        req = request.get(`http://localhost:${PORT}/api/scripts/run?script=${script}`, (res)=>{
+            expect(res.statusCode).toBe(200);
+            let data = '';
+            res.on("data",(chunk)=>{ data += chunk; });
+            res.on("end", ()=>{
+                expect(data).toBeInstanceOf(String);
+                expect(data).toBeOfType("json");
+                let jsdata = JSON.parse(data);
+                expect(jsdata).toHaveMembers({status: "ok"});
+                //expect(jsdata).toHaveValues({status: "ok"});
+                done();
+            });
+        });
+        req.on("error", err=>{
+            done.fail(err);
+        });
+    });*/
+    
 
 
 
