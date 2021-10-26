@@ -48,35 +48,6 @@ function getSettings() {
     return Object.create(settings);
 }
 
-function runScript(scriptPath, callback) {
-
-    var callbackInvoked = false;
-
-    var process = childProcess.fork(scriptPath);
-
-    process.on('error', function (err) {
-        if (callbackInvoked) return;
-        callbackInvoked = true;
-        callback(err);
-    });
-
-    process.on('exit', function (code) {
-        if (callbackInvoked) return;
-        callbackInvoked = true;
-        var err = code === 0 ? null : new Error('exit code ' + code);
-        callback(err);
-    });
-
-    return process;
-
-}
-
-// Now we can run a script and invoke a callback when complete, e.g.
-/*runScript('./some-script.js', function (err) {
-    if (err) throw err;
-    console.log('finished running some-script.js');
-});*/
-
 function startServer(config = {}, callback) {
     configFromFile = require("./server-config.json");
     settings = Object.assign(settings, configFromFile);
@@ -107,7 +78,6 @@ function isRunning() {
 
 
 module.exports = {
-    runScript: runScript,
     startServer: startServer,
     stopServer: stopServer,
     isRunning: isRunning,
