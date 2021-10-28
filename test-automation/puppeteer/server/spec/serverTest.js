@@ -49,10 +49,6 @@ const API_TESTS = [
         expectValues: {status: "error"},
         expectKeys: {status: "", error: ""}
     },
-    {
-        path: "/api/scripts/run?script=script-1-ok.js",
-        expectValues: {status: "ok"},
-    },
     
 ];
 
@@ -79,6 +75,7 @@ describe("server.js", function() {
 
 
     // testing api calls
+    let req;
 
     API_TESTS.forEach(test => {
         it(`should return a result for ${test.path}`, (done)=>{
@@ -105,27 +102,8 @@ describe("server.js", function() {
     // testing script running
 
     let script = SCRIPT_LIST[Math.floor(Math.random() * SCRIPT_LIST.length)];
-
-    /*it(`should run the script but not specify the script and wait for error `, (done) => {
-        req = request.get(`http://localhost:${PORT}/api/scripts/run`, (res)=>{
-            expect(res.statusCode).toBe(200);
-            let data = '';
-            res.on("data",(chunk)=>{ data += chunk; });
-            res.on("end", ()=>{
-                expect(data).toBeInstanceOf(String);
-                expect(data).toBeOfType("json");
-                let jsdata = JSON.parse(data);
-                expect(jsdata).toHaveMembers({status: "error", error: ""});
-                expect(jsdata).toHaveValues({status: "error"});
-                done();
-            });
-        });
-        req.on("error", err=>{
-            done.fail(err);
-        });
-    });*/
-
-    /*it(`should run the script '${script}' and wait for result `, (done) => {
+    
+    it(`should run the script '${script}' and wait for result `, (done) => {
         req = request.get(`http://localhost:${PORT}/api/scripts/run?script=${script}`, (res)=>{
             expect(res.statusCode).toBe(200);
             let data = '';
@@ -135,14 +113,63 @@ describe("server.js", function() {
                 expect(data).toBeOfType("json");
                 let jsdata = JSON.parse(data);
                 expect(jsdata).toHaveMembers({status: "ok"});
-                //expect(jsdata).toHaveValues({status: "ok"});
-                done();
+                expect(jsdata).toHaveValues({status: "ok"});
+
+                let req2 = request.get(`http://localhost:${PORT}/api/scripts/status?script=${script}`, (res)=>{
+                    expect(res.statusCode).toBe(200);
+                    let data = '';
+                    res.on("data",(chunk)=>{ data += chunk; });
+                    res.on("end", ()=>{
+                        expect(data).toBeInstanceOf(String);
+                        expect(data).toBeOfType("json");
+                        let jsdata = JSON.parse(data);
+                        expect(jsdata).toHaveMembers({status: "ready", stdout: null, stderr: null, exitCode: 0, startTime: null, stopTime: null, error: null});
+                        expect(jsdata).toHaveValuesOr([{status: "running"}, {status: "exited"}]);
+
+                        let req3 = request.get(`http://localhost:${PORT}/api/scripts/kill?script=${script}`, (res)=>{
+                            expect(res.statusCode).toBe(200);
+                            let data = '';
+                            res.on("data",(chunk)=>{ data += chunk; });
+                            res.on("end", ()=>{
+                                expect(data).toBeInstanceOf(String);
+                                expect(data).toBeOfType("json");
+                                let jsdata = JSON.parse(data);
+                                expect(jsdata).toHaveMembers({status: "ok"});
+                                expect(jsdata).toHaveValues({status: "ok"});
+                                
+                                let req4 = request.get(`http://localhost:${PORT}/api/scripts/status?script=${script}`, (res)=>{
+                                    expect(res.statusCode).toBe(200);
+                                    let data = '';
+                                    res.on("data",(chunk)=>{ data += chunk; });
+                                    res.on("end", ()=>{
+                                        expect(data).toBeInstanceOf(String);
+                                        expect(data).toBeOfType("json");
+                                        let jsdata = JSON.parse(data);
+                                        expect(jsdata).toHaveMembers({status: "ready", stdout: null, stderr: null, exitCode: 0, startTime: null, stopTime: null, error: null});
+                                        expect(jsdata).toHaveValuesOr([{status: "killed"}, {status: "exited"}]);
+
+                                        done();
+                                    });        
+                                });
+                                req4.on("error", err=>{
+                                    done.fail(err);
+                                });
+                            });
+                        });
+                        req3.on("error", err=>{
+                            done.fail(err);
+                        });
+                    });
+                });
+                req2.on("error", err=>{
+                    done.fail(err);
+                });
             });
         });
         req.on("error", err=>{
             done.fail(err);
         });
-    });*/
+    });
     
 
 

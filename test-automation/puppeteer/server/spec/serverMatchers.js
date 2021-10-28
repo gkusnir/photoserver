@@ -56,11 +56,36 @@ function injectMatchers() {
                             if (actual[key] !== expected[key]) {
                                 return {
                                     pass: false,
-                                    message: `value of '${key}' is different`
+                                    message: `value of '${key}' is different; should be '${expected[key]}' but is '${actual[key]}' `
                                 };
                             }
                             return {pass: true};
                         }
+                    }
+                };
+            },
+            toHaveValuesOr: function(){
+                return {
+                    compare: function(actual,expected) {
+                        let passed = false;
+                        for (exp in expected) {
+                            let passed2 = true;
+                            for (key in expected[exp]) {
+                                if (actual[key] !== expected[exp][key]) {
+                                    passed2 = false;
+                                    break;
+                                }
+                            }
+                            if (passed2) {
+                                passed = true;
+                                break;
+                            }
+                        }
+                        if (passed) return {pass: true};
+                        else return {
+                            pass: false,
+                            message: `there is no matching set of values `
+                        };
                     }
                 };
             },

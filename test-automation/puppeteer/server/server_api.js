@@ -24,6 +24,7 @@ function requestListener(req, res) {
     let pathname = reqparams.pathname[reqparams.pathname.length - 1] == '/' ? reqparams.pathname.substring(0,reqparams.pathname.length - 1) : reqparams.pathname;
     // use path without trailing slash
     
+    let script_name, script_path;
     switch(pathname) {
         case "/api/version":
         case "/api":
@@ -45,14 +46,14 @@ function requestListener(req, res) {
             res.end(JSON.stringify(getScriptList(settings.scriptPath, scripts)));
             return;
         case "/api/scripts/run":
-            let script_name = url.searchParams.get("script");
+            script_name = url.searchParams.get("script");
             if (!script_name) {
                 res.setHeader('Content-Type', 'application/json');
                 res.writeHead(200);
                 res.end(JSON.stringify({status:"error",error:"missing script parameter "}));
                 return;
             }
-            let script_path = path.normalize(path.join(process.cwd(), settings.scriptPath, script_name));
+            script_path = path.normalize(path.join(process.cwd(), settings.scriptPath, script_name));
             if (!fs.existsSync(script_path)) {
                 res.setHeader('Content-Type', 'application/json');
                 res.writeHead(200);
@@ -71,6 +72,68 @@ function requestListener(req, res) {
                 res.end(JSON.stringify({status:"error", error: e.stack}));
                 return;
             }
+        case "/api/scripts/status":
+            script_name = url.searchParams.get("script");
+            if (!script_name) {
+                res.setHeader('Content-Type', 'application/json');
+                res.writeHead(200);
+                res.end(JSON.stringify({status:"error",error:"missing script parameter "}));
+                return;
+            }
+            if (scripts[script_name]) {
+                res.setHeader('Content-Type', 'application/json');
+                res.writeHead(200);
+                res.end(JSON.stringify(getScriptListFull(settings.scriptPath, scripts)[script_name]));
+                return;
+            } else {
+                res.setHeader('Content-Type', 'application/json');
+                res.writeHead(200);
+                res.end(JSON.stringify({status:"error",error:`script ${script_name} does not exist `}));
+                return;
+            }
+        case "/api/scripts/kill":
+            script_name = url.searchParams.get("script");
+            if (!script_name) {
+                res.setHeader('Content-Type', 'application/json');
+                res.writeHead(200);
+                res.end(JSON.stringify({status:"error",error:"missing script parameter "}));
+                return;
+            }
+            if (scripts[script_name]) {
+                try {
+                    if (scripts[script_name].status == "running") {
+                        if (scripts[script_name].process.kill()) {
+                            scripts[script_name].status = "killed";
+                            res.setHeader('Content-Type', 'application/json');
+                            res.writeHead(200);
+                            res.end(JSON.stringify({status:"ok"}));
+                            return;
+                        } else {
+                            res.setHeader('Content-Type', 'application/json');
+                            res.writeHead(200);
+                            res.end(JSON.stringify({status:"error",error:`unsuccessful kill attempt for script '${script_name}' `}));
+                            return;
+                        }
+                    } else {
+                        res.setHeader('Content-Type', 'application/json');
+                        res.writeHead(200);
+                        res.end(JSON.stringify({status:"ok"}));
+                        return;
+                    }
+                } catch(e) {
+                    res.setHeader('Content-Type', 'application/json');
+                    res.writeHead(200);
+                    res.end(JSON.stringify({status:"error",error:e.stack}));
+                    return;
+                }
+            } else {
+                res.setHeader('Content-Type', 'application/json');
+                res.writeHead(200);
+                res.end(JSON.stringify({status:"error",error:`script ${script_name} does not exist `}));
+                return;
+            }
+    
+
         default:
             res.writeHead(404);
             res.end("page not found");
@@ -78,9 +141,23 @@ function requestListener(req, res) {
     }
 }
 
-function getScriptList(dir, scripts) {
+function getScriptListFull(dir, scripts) {
     synchScriptList(dir, scripts);
-    return scripts;
+    let keysToExclude = ["process"];
+    let outScripts = {};
+    Object.keys(scripts).forEach(s => {
+        outScripts[s] = {}
+        Object.keys(scripts[s]).forEach(e => {
+            if (!keysToExclude.includes(e)) {
+                outScripts[s][e] = scripts[s][e];
+            }
+        });
+    });
+    return outScripts;
+}
+
+function getScriptList(dir, scripts) {
+    return Object.keys(getScriptListFull(dir, scripts));
 }
 
 function getScriptFileList(dir) {
@@ -101,12 +178,15 @@ function synchScriptList(dir, scripts) {
             delete scripts[s];
         }
     }
-    
 }
 
 function scriptExit(script, code, err, signal, stdout, stderr) {
-    console.log(script, code, err, signal, stdout, stderr);
-    // save the status to scripts
+    scripts[script].status = 'exited';
+    scripts[script].stdout = stdout;
+    scripts[script].stderr = stderr;
+    scripts[script].exitCode = code;
+    scripts[script].stopTime = Date.now();
+    scripts[script].error = err instanceof Error ? err.stack : err;
 }
 
 function runScript(scriptPath, exitCallback, timeout) {
@@ -145,16 +225,14 @@ function runScript(scriptPath, exitCallback, timeout) {
         stderr += data;
     });
 
-    scripts[scriptFile] = {
-        status: 'running',
-        stdout: null,
-        stderr: null,
-        exitCode: 0,
-        startTime: Date.now(),
-        stopTime: null,
-        error: null,
-        process: child,
-    };
+    scripts[scriptFile].status = 'running';
+    scripts[scriptFile].stdout = null;
+    scripts[scriptFile].stderr = null;
+    scripts[scriptFile].exitCode = 0;
+    scripts[scriptFile].startTime = Date.now();
+    scripts[scriptFile].stopTime = null;
+    scripts[scriptFile].error = null;
+    scripts[scriptFile].process = child;
     
     return child;
 
