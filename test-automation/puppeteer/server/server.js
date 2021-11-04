@@ -16,12 +16,11 @@
 */
 
 const http = require("http");
-const childProcess = require('child_process');
 const requestListener = require("./server_api.js").requestListener;
 let api_settings = require("./server_api.js").settings;
 
 let settings = {
-    host: 'localhost',
+    host: '0.0.0.0',
     port: 8000,
     server: null,
     requestListener: requestListener,

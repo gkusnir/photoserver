@@ -13,9 +13,20 @@ RUN apt-get update && \
     chromium \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm i puppeteer
+RUN npm i puppeteer jasmine delay
+
+COPY server/server.js /server/server.js
+COPY server/server_api.js /server/server_api.js
+
+RUN echo "{\"scriptPath\":\"/node_home\"}" > /server/server-config.json
+WORKDIR /server
+RUN npm install --save child_process fs http http-shutdown path request-target url
+
+WORKDIR /node_home
 
 VOLUME /node_home
+
+EXPOSE 8000
 
 RUN echo "node version: "$(node -v)
 RUN echo "npm version: "$(npm -v)
