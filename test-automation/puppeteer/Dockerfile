@@ -17,8 +17,8 @@ RUN npm i puppeteer jasmine delay
 
 COPY server/server.js /server/server.js
 COPY server/server_api.js /server/server_api.js
+COPY server/.scriptignore /node_home/.scriptignore
 
-RUN echo "{\"scriptPath\":\"/node_home\"}" > /server/server-config.json
 WORKDIR /server
 RUN npm install --save child_process fs http http-shutdown path request-target url
 
@@ -31,5 +31,5 @@ EXPOSE 8000
 RUN echo "node version: "$(node -v)
 RUN echo "npm version: "$(npm -v)
 
-CMD ["bash"]
+CMD ["node", "/server/server.js", "--host=0.0.0.0", "--port=8000", "--script-path=/node_home"]
 

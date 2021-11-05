@@ -27,7 +27,7 @@ const API_TESTS = [
     },
     {
         path: "/api/scripts/list",
-        expectToBeList: SCRIPT_LIST,
+        expectToBeExactList: SCRIPT_LIST,
     },
     {
         path: "/api/scripts/run",
@@ -90,6 +90,7 @@ describe("server.js", function() {
                     if (test.expectKeys || test.expect) expect(jsdata).toHaveMembers(test.expectKeys || test.expect);
                     if (test.expectValues || test.expect) expect(jsdata).toHaveValues(test.expectValues || test.expect);
                     if (test.expectToBeList) expect(jsdata).toBeList(test.expectToBeList);
+                    if (test.expectToBeExactList) expect(jsdata).toBeExactList(test.expectToBeExactList);
                     done();
                 });
             });

@@ -17,6 +17,8 @@ const { fork } = require('child_process');
 let settings = {};
 let scripts = {};
 
+const IGNORE_FILE = ".scriptignore";
+
 function requestListener(req, res) {
     let reqparams = urlparse(req);
     let url = new modurl.URL(req.url, `http://${settings.host}:${settings.port}`);
@@ -53,7 +55,8 @@ function requestListener(req, res) {
                 res.end(JSON.stringify({status:"error",error:"missing script parameter "}));
                 return;
             }
-            script_path = path.normalize(path.join(process.cwd(), settings.scriptPath, script_name));
+            if (path.isAbsolute(settings.scriptPath)) script_path = path.normalize(path.join(settings.scriptPath, script_name));
+            else script_path = path.normalize(path.join(process.cwd(), settings.scriptPath, script_name));
             if (!fs.existsSync(script_path)) {
                 res.setHeader('Content-Type', 'application/json');
                 res.writeHead(200);
@@ -161,9 +164,28 @@ function getScriptList(dir, scripts) {
 }
 
 function getScriptFileList(dir) {
-    dir = path.normalize(path.join(process.cwd(), dir));
-    let fl = fs.readdirSync(dir);
-    return fl;
+    if (path.isAbsolute(dir)) dir = path.normalize(dir);
+    else dir = path.normalize(path.join(process.cwd(), dir));
+    let fl = fs.readdirSync(dir,{withFileTypes:true});
+    let ignore = getIgnoredFiles(dir);
+    
+    let outList = [];
+    for (let f in fl) {
+        if (ignore.includes(fl[f].name)) continue;
+        if (!fl[f].isFile()) continue;
+        outList.push(fl[f].name);
+    }
+    return outList;
+}
+
+function getIgnoredFiles(dir) {
+    let ignoreFilePath = path.normalize(path.join(dir, IGNORE_FILE));
+    if (!fs.existsSync(ignoreFilePath)) return [IGNORE_FILE];
+    let ignoreFileContents = fs.readFileSync(ignoreFilePath, "utf8");
+    let lines = ignoreFileContents.split(/\r?\n/);
+    let outLines = lines.filter(str => str);
+    outLines.push(IGNORE_FILE);
+    return outLines;
 }
 
 function synchScriptList(dir, scripts) {

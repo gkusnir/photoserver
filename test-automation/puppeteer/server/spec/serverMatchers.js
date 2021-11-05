@@ -109,7 +109,39 @@ function injectMatchers() {
                         return {pass: true};
                     }
                 };
-            }
+            },
+            toBeExactList: function(){
+                return {
+                    compare: function(actual,expected) {
+                        if (!(!!actual && actual.constructor === Array)) {
+                            return {
+                                pass: false,
+                                message: `value is not an array `
+                            };
+                        }
+                        for (let item in expected) {
+                            if (!(actual.includes(expected[item]))) {
+                                return {
+                                    pass: false,
+                                    message: `value is different `
+                                };
+                            }
+                        }
+                        for (let item in actual) {
+                            if (!(expected.includes(actual[item]))) {
+                                return {
+                                    pass: false,
+                                    message: `value is different `
+                                };
+                            }
+                        }
+
+                        return {pass: true};
+                    }
+                };
+            },
+
+
         });
     });
 }

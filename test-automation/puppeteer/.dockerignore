@@ -2,3 +2,4 @@ server
 
 !server/server.js
 !server/server_api.js
+!server/.scriptignore

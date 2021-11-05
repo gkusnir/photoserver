@@ -20,13 +20,14 @@ const requestListener = require("./server_api.js").requestListener;
 let api_settings = require("./server_api.js").settings;
 
 let settings = {
-    host: '0.0.0.0',
+    host: 'localhost',
     port: 8000,
     server: null,
     requestListener: requestListener,
     running: false,
     writeToConsole: false,
     configFile: "server-config.json",
+    scriptPath: ".",
 };
 
 let transferSettingsKeys = [
@@ -48,8 +49,12 @@ function getSettings() {
 }
 
 function startServer(config = {}, callback) {
-    configFromFile = require("./server-config.json");
-    settings = Object.assign(settings, configFromFile);
+    try{
+        configFromFile = require("./server-config.json");
+        settings = Object.assign(settings, configFromFile);
+    } catch(e) {
+        // missing config file        
+    }
     settings = Object.assign(settings, config);
     settings.server = http.createServer(settings.requestListener);
     settings.server = require('http-shutdown')(settings.server);
@@ -74,8 +79,6 @@ function isRunning() {
     return settings.running;
 }
 
-
-
 module.exports = {
     startServer: startServer,
     stopServer: stopServer,
@@ -84,5 +87,29 @@ module.exports = {
 };
 
 if (typeof require !== 'undefined' && require.main === module) {
-    startServer({writeToConsole: true});
+
+    let argv = process.argv.slice(2);
+
+    let settings = {};
+
+    argv.forEach(arg => {
+        let tt = arg.split("=");
+        switch (tt[0]) {
+            case "--host":
+                settings.host = tt[1];
+                break;
+            case "--port":
+                settings.port = parseInt(tt[1]);
+                break;
+            case "--write-to-console":
+                settings.writeToConsole = true;
+                break;
+            case "--script-path":
+                settings.scriptPath = tt[1];
+                break;
+        }
+    });
+
+    startServer(settings);
+    
 }
