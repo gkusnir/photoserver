@@ -1,4 +1,5 @@
 server
+docker-compose.yml
 
 !server/server.js
 !server/server_api.js

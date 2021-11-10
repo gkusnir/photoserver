@@ -1,0 +1,21 @@
+version: "3"
+services:
+  jenkins-agent:
+    image: "jenkins/ssh-agent:alpine"
+    restart: always
+    container_name: "jenkins-agent"
+    ports:
+      - "10022:22"
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCztD3iam6xRy4VQ+mzS8L0PpxntGD7gZg8FUgqqEDuy+w1FVslGt39UTycEfE27NU18pucwBxf3NBeLePDI4kt100qV6KXBQPl5CaF5tLRCWvxP0xEL5/A/712760Q+DpFclGa2ZbmOrcgeIc2gDOD+dVd+Ue8LMkySbQmDal2tM2fhzR+IPv78KFuuZzmyJC3xfgdcNRpDAR8yBo0Fa9I9xb6QnI0Fxw3sU1UGv/AEyT+MzH1UoL5k2/IhsDBQtMvyuwwZwV8NW6QL8JA8hV83cD3hBtD0bmdrShUjgKF2TO5Rx9e+iaWSMPa8U6kChyHjXbG8Z1cyDx7yvIN8SRlOAkJFuhjvjHLjbAczmYE19EMs0tm8i0+zhFui0+a3dW1V9Fx1izX0rYSJfE18bFAUJC03k78J+ilBRyhxeltgmS/JQj6lc6ZOXq+CW3gflJatUYE08Mj581DjtwnClVstIoBWQ1Vi1PDGasagMEFlP9eN267i+rCr05JPhZ8aNs=
+  puppeteer:
+    image: node:puppeteer
+    ports:
+      - "8000:8000"
+    volumes:
+      - "node_home:/node_home"
+    container_name: puppeteer
+    restart: always
+
+volumes:
+  node_home:

@@ -246,4 +246,4 @@ session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_
 - https://lukems.com/en/install-jenkins-and-nginx-with-docker-compose/
 - https://www.digitalocean.com/community/tutorials/how-to-configure-nginx-with-ssl-as-a-reverse-proxy-for-jenkins
 
-Localhost or 127.0.0.1 is not defined within container. Docker network defines hosts and the nginx reverse proxy muste refer to the jenkins server as 'jenkins' - the name of the service in docker compose.
+Localhost or 127.0.0.1 is not defined within container. Docker network defines hosts and the nginx reverse proxy must refer to the jenkins server as 'jenkins' - the name of the service in docker compose.
