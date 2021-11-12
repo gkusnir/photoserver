@@ -5,6 +5,7 @@
     https://github.com/JoshuaWise/request-target/blob/master/index.js
     https://nodejs.org/api/url.html#the-whatwg-url-api
     https://www.freecodecamp.org/news/node-js-child-processes-everything-you-need-to-know-e69498fe970a/
+    https://github.com/mscdex/busboy
 
 */
 
@@ -13,6 +14,7 @@ const path = require("path");
 const urlparse = require("request-target");
 const modurl = require("url");
 const { fork } = require('child_process');
+const Busboy = require('busboy');
 
 let settings = {};
 let scripts = {};
@@ -25,8 +27,7 @@ function requestListener(req, res) {
     
     let pathname = reqparams.pathname[reqparams.pathname.length - 1] == '/' ? reqparams.pathname.substring(0,reqparams.pathname.length - 1) : reqparams.pathname;
     // use path without trailing slash
-    
-    let script_name, script_path;
+    let script_name;
     switch(pathname) {
         case "/api/version":
         case "/api":
@@ -47,6 +48,44 @@ function requestListener(req, res) {
             res.writeHead(200);
             res.end(JSON.stringify(getScriptList(settings.scriptPath, scripts)));
             return;
+        case "/api/scripts/upload":
+            res.setHeader('Content-Type', 'text/html');
+            res.writeHead(200);
+            res.end('<html><body> \
+                <form action="/api/scripts/save" method="post" enctype="multipart/form-data"> \
+                    <input type="file" name="scriptfile" /> \
+                    <input type="submit" /> \
+                </form> \
+                </body></html>');
+            return;
+    
+        case "/api/scripts/save":
+            if (req.method !== 'POST') {
+                res.end(JSON.stringify({status: "error", error: "wrong http method"}));
+                return;
+            }
+            let busboy = new Busboy({ headers: req.headers });
+            busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+                let script_path;
+                if (path.isAbsolute(settings.scriptPath)) script_path = path.normalize(settings.scriptPath);
+                else script_path = path.normalize(path.join(process.cwd(), settings.scriptPath));
+                let saveTo = path.join(script_path, path.basename(filename));
+                file.pipe(fs.createWriteStream(saveTo));
+            });
+            busboy.on('finish', function() {
+                res.setHeader('Content-Type', 'application/json');
+                res.writeHead(200);
+                res.end(JSON.stringify({status:"ok"}));
+                return;
+            });
+            busboy.on('error', err => {
+                res.setHeader('Content-Type', 'application/json');
+                res.writeHead(200);
+                res.end(JSON.stringify({status:"error", error: err.stack}));
+                return;
+            });
+            return req.pipe(busboy);
+
         case "/api/scripts/run":
             script_name = url.searchParams.get("script");
             if (!script_name) {
@@ -55,6 +94,7 @@ function requestListener(req, res) {
                 res.end(JSON.stringify({status:"error",error:"missing script parameter "}));
                 return;
             }
+            let script_path;
             if (path.isAbsolute(settings.scriptPath)) script_path = path.normalize(path.join(settings.scriptPath, script_name));
             else script_path = path.normalize(path.join(process.cwd(), settings.scriptPath, script_name));
             if (!fs.existsSync(script_path)) {

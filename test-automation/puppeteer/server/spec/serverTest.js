@@ -49,6 +49,13 @@ const API_TESTS = [
         expectValues: {status: "error"},
         expectKeys: {status: "", error: ""}
     },
+    {
+        path: "/api/scripts/save",
+        method: 'post',
+        data: {},
+        run: () => {},
+        expectValues: {status: "ok"},
+    },
     
 ];
 
