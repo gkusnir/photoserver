@@ -1,5 +1,11 @@
+/* 
+    https://nodejs.dev/learn/make-an-http-post-request-using-nodejs
+
+*/
+
+
 const server = require("../server.js");
-const request = require("http");
+const http = require("http");
 const matchers = require("./serverMatchers.js");
 
 const PORT = 8001;
@@ -50,10 +56,26 @@ const API_TESTS = [
         expectKeys: {status: "", error: ""}
     },
     {
+        path: "/api/scripts/delete?script=uploaded-script-99.js",
+        expectValues: {status: "ok"},
+        run: (success) => {
+            if (success) {
+                let i = SCRIPT_LIST.indexOf("uploaded-script-99.js");
+                if (i !== -1) SCRIPT_LIST.splice(i, 1);
+            }
+        },
+    },
+    {
         path: "/api/scripts/save",
         method: 'post',
-        data: {},
-        run: () => {},
+        headers: {
+            "Content-Type": "multipart/form-data; boundary=---------------------------1629283039331979682228239877",
+            "Content-Length": "287",
+        },
+        data: '-----------------------------1629283039331979682228239877\r\nContent-Disposition: form-data; name="scriptfile"; filename="uploaded-script-99.js"\r\nContent-Type: application/x-javascript\r\n\r\nlet script_name = "uploaded-script";\r\n\r\n\r\n-----------------------------1629283039331979682228239877--',
+        run: (success) => {
+            if (success) SCRIPT_LIST.push("uploaded-script-99.js");
+        },
         expectValues: {status: "ok"},
     },
     
@@ -65,7 +87,7 @@ describe("server.js", function() {
     let srv;
 
     beforeAll(function(done) {
-        srv = server.startServer({port:PORT}, ()=>{
+        srv = server.startServer({port:PORT,deleteScriptBeforeServerStart:"uploaded-script-99.js"}, ()=>{
             expect(srv).toBeDefined();
             expect(srv.listening).toBe(true);
             done();
@@ -86,24 +108,56 @@ describe("server.js", function() {
 
     API_TESTS.forEach(test => {
         it(`should return a result for ${test.path}`, (done)=>{
-            req = request.get(`http://localhost:${PORT}${test.path}`, (res)=>{
-                expect(res.statusCode).toBe(200);
-                let data = '';
-                res.on("data",(chunk)=>{ data += chunk; });
-                res.on("end", ()=>{
-                    expect(data).toBeInstanceOf(String);
-                    expect(data).toBeOfType("json");
-                    let jsdata = JSON.parse(data);
-                    if (test.expectKeys || test.expect) expect(jsdata).toHaveMembers(test.expectKeys || test.expect);
-                    if (test.expectValues || test.expect) expect(jsdata).toHaveValues(test.expectValues || test.expect);
-                    if (test.expectToBeList) expect(jsdata).toBeList(test.expectToBeList);
-                    if (test.expectToBeExactList) expect(jsdata).toBeExactList(test.expectToBeExactList);
-                    done();
+            if (test.method === 'post') {
+                const options = {
+                    hostname: 'localhost',
+                    port: PORT,
+                    path: test.path,
+                    method: 'POST',
+                    headers: test.headers,
+                }
+                req = http.request(options, (res) => {
+                    expect(res.statusCode).toBe(200);
+                    let data = '';
+                    res.on("data",(chunk)=>{ data += chunk; });
+                    res.on("end", ()=>{
+                        expect(data).toBeInstanceOf(String);
+                        expect(data).toBeOfType("json");
+                        let jsdata = JSON.parse(data);
+                        if (test.expectKeys || test.expect) expect(jsdata).toHaveMembers(test.expectKeys || test.expect);
+                        if (test.expectValues || test.expect) expect(jsdata).toHaveValues(test.expectValues || test.expect);
+                        if (test.expectToBeList) expect(jsdata).toBeList(test.expectToBeList);
+                        if (test.expectToBeExactList) expect(jsdata).toBeExactList(test.expectToBeExactList);
+                        if (test.run) test.run(true);
+                        done();
+                    });
                 });
-            });
-            req.on("error", err=>{
-                done.fail(err);
-            });
+                req.on("error", err=>{
+                    done.fail(err);
+                });
+                req.write(test.data);
+                req.end();
+            } else {
+                req = http.get(`http://localhost:${PORT}${test.path}`, (res)=>{
+                    expect(res.statusCode).toBe(200);
+                    let data = '';
+                    res.on("data",(chunk)=>{ data += chunk; });
+                    res.on("end", ()=>{
+                        expect(data).toBeInstanceOf(String);
+                        expect(data).toBeOfType("json");
+                        let jsdata = JSON.parse(data);
+                        if (test.expectKeys || test.expect) expect(jsdata).toHaveMembers(test.expectKeys || test.expect);
+                        if (test.expectValues || test.expect) expect(jsdata).toHaveValues(test.expectValues || test.expect);
+                        if (test.expectToBeList) expect(jsdata).toBeList(test.expectToBeList);
+                        if (test.expectToBeExactList) expect(jsdata).toBeExactList(test.expectToBeExactList);
+                        if (test.run) test.run(true);
+                        done();
+                    });
+                });
+                req.on("error", err=>{
+                    done.fail(err);
+                });
+            }
         });
     });
 
@@ -112,7 +166,7 @@ describe("server.js", function() {
     let script = SCRIPT_LIST[Math.floor(Math.random() * SCRIPT_LIST.length)];
     
     it(`should run the script '${script}' and wait for result `, (done) => {
-        req = request.get(`http://localhost:${PORT}/api/scripts/run?script=${script}`, (res)=>{
+        req = http.get(`http://localhost:${PORT}/api/scripts/run?script=${script}`, (res)=>{
             expect(res.statusCode).toBe(200);
             let data = '';
             res.on("data",(chunk)=>{ data += chunk; });
@@ -123,7 +177,7 @@ describe("server.js", function() {
                 expect(jsdata).toHaveMembers({status: "ok"});
                 expect(jsdata).toHaveValues({status: "ok"});
 
-                let req2 = request.get(`http://localhost:${PORT}/api/scripts/status?script=${script}`, (res)=>{
+                let req2 = http.get(`http://localhost:${PORT}/api/scripts/status?script=${script}`, (res)=>{
                     expect(res.statusCode).toBe(200);
                     let data = '';
                     res.on("data",(chunk)=>{ data += chunk; });
@@ -134,7 +188,7 @@ describe("server.js", function() {
                         expect(jsdata).toHaveMembers({status: "ready", stdout: null, stderr: null, exitCode: 0, startTime: null, stopTime: null, error: null});
                         expect(jsdata).toHaveValuesOr([{status: "running"}, {status: "exited"}]);
 
-                        let req3 = request.get(`http://localhost:${PORT}/api/scripts/kill?script=${script}`, (res)=>{
+                        let req3 = http.get(`http://localhost:${PORT}/api/scripts/kill?script=${script}`, (res)=>{
                             expect(res.statusCode).toBe(200);
                             let data = '';
                             res.on("data",(chunk)=>{ data += chunk; });
@@ -145,7 +199,7 @@ describe("server.js", function() {
                                 expect(jsdata).toHaveMembers({status: "ok"});
                                 expect(jsdata).toHaveValues({status: "ok"});
                                 
-                                let req4 = request.get(`http://localhost:${PORT}/api/scripts/status?script=${script}`, (res)=>{
+                                let req4 = http.get(`http://localhost:${PORT}/api/scripts/status?script=${script}`, (res)=>{
                                     expect(res.statusCode).toBe(200);
                                     let data = '';
                                     res.on("data",(chunk)=>{ data += chunk; });

@@ -20,7 +20,7 @@ COPY server/server_api.js /server/server_api.js
 COPY server/.scriptignore /node_home/.scriptignore
 
 WORKDIR /server
-RUN npm install --save child_process fs http http-shutdown path request-target url
+RUN npm install --save child_process fs http http-shutdown path request-target url busboy
 
 WORKDIR /node_home
 

@@ -18,6 +18,8 @@
 const http = require("http");
 const requestListener = require("./server_api.js").requestListener;
 let api_settings = require("./server_api.js").settings;
+let testUtils;
+try{ testUtils = require("./server_test_utils.js"); } catch(e){ testUtils = {beforeServerStart: ()=>{}, }; }
 
 let settings = {
     host: 'localhost',
@@ -56,6 +58,7 @@ function startServer(config = {}, callback) {
         // missing config file        
     }
     settings = Object.assign(settings, config);
+    testUtils.beforeServerStart(settings);
     settings.server = http.createServer(settings.requestListener);
     settings.server = require('http-shutdown')(settings.server);
     settings.running = true;

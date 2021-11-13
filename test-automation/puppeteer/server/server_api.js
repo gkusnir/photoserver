@@ -27,7 +27,7 @@ function requestListener(req, res) {
     
     let pathname = reqparams.pathname[reqparams.pathname.length - 1] == '/' ? reqparams.pathname.substring(0,reqparams.pathname.length - 1) : reqparams.pathname;
     // use path without trailing slash
-    let script_name;
+    let script_name, script_path;
     switch(pathname) {
         case "/api/version":
         case "/api":
@@ -85,7 +85,23 @@ function requestListener(req, res) {
                 return;
             });
             return req.pipe(busboy);
-
+        case "/api/scripts/delete":
+            script_name = url.searchParams.get("script");
+            if (!script_name) {
+                res.setHeader('Content-Type', 'application/json');
+                res.writeHead(200);
+                res.end(JSON.stringify({status:"error",error:"missing script parameter "}));
+                return;
+            }
+            if (path.isAbsolute(settings.scriptPath)) script_path = path.normalize(path.join(settings.scriptPath, script_name));
+            else script_path = path.normalize(path.join(process.cwd(), settings.scriptPath, script_name));
+            if (fs.existsSync(script_path)) {
+                fs.unlinkSync(script_path);
+            }
+            res.setHeader('Content-Type', 'application/json');
+            res.writeHead(200);
+            res.end(JSON.stringify({status:"ok"}));
+            return;
         case "/api/scripts/run":
             script_name = url.searchParams.get("script");
             if (!script_name) {
@@ -94,7 +110,6 @@ function requestListener(req, res) {
                 res.end(JSON.stringify({status:"error",error:"missing script parameter "}));
                 return;
             }
-            let script_path;
             if (path.isAbsolute(settings.scriptPath)) script_path = path.normalize(path.join(settings.scriptPath, script_name));
             else script_path = path.normalize(path.join(process.cwd(), settings.scriptPath, script_name));
             if (!fs.existsSync(script_path)) {
@@ -252,7 +267,6 @@ function scriptExit(script, code, err, signal, stdout, stderr) {
 }
 
 function runScript(scriptPath, exitCallback, timeout) {
-
     synchScriptList(settings.scriptPath, scripts);
 
     let callbackInvoked = false;
