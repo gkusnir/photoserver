@@ -23,9 +23,29 @@ jenkins:
       permissions:
         - "Overall/Administer:gkusnir"
         - "Overall/Administer:xtp00001"
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false
   remotingSecurity:
     enabled: true
   numExecutors: 0
+  nodes:
+  - permanent:
+      labelString: "agent1"
+      launcher:
+        ssh:
+          credentialsId: "azure-docker-agent1"
+          host: "azure.napadovisko.sk"
+          javaPath: "/opt/java/openjdk/bin/java"
+          port: 10022
+          sshHostKeyVerificationStrategy:
+            manuallyTrustedKeyVerificationStrategy:
+              requireInitialManualTrust: false
+      mode: EXCLUSIVE
+      numExecutors: 1
+      name: "azure-docker-agent1"
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
 security:
   queueItemAuthenticator:
     authenticators:
