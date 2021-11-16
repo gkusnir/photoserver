@@ -11,6 +11,7 @@ services:
     secrets:
       - azure-docker-agent1-key
       - azure-docker-agent1-pass
+      - github-32a1d21f0de4e551cf80
   nginx:
     image: jonasal/nginx-certbot:latest
     ports:
@@ -30,6 +31,8 @@ secrets:
     file: ./secrets/azure-docker-agent1-key
   azure-docker-agent1-pass:
     file: ./secrets/azure-docker-agent1-pass.txt
+  github-32a1d21f0de4e551cf80:
+    file: ./secrets/github-32a1d21f0de4e551cf80
 
 volumes:
   jenkins_home:
