@@ -8,6 +8,9 @@ services:
     container_name: "jenkins"
     ports:
       - "50000:50000"
+    secrets:
+      - azure-docker-agent1-key
+      - azure-docker-agent1-pass
   nginx:
     image: jonasal/nginx-certbot:latest
     ports:
@@ -22,6 +25,11 @@ services:
       - "./nginx/user_conf.d:/etc/nginx/user_conf.d:ro"
     container_name: nginx-certbot
     restart: always
+secrets:
+  azure-docker-agent1-key:
+    file: ./secrets/azure-docker-agent1-key
+  azure-docker-agent1-pass:
+    file: ./secrets/azure-docker-agent1-pass.txt
 
 volumes:
   jenkins_home:

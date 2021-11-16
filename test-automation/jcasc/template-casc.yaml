@@ -1,8 +1,20 @@
+credentials:
+  system:
+    domainCredentials:
+    - credentials:
+      - basicSSHUserPrivateKey:
+          id: "azure-docker-agent1"
+          passphrase: ${azure-docker-agent1-pass}
+          privateKeySource:
+            directEntry:
+              privateKey: ${azure-docker-agent1-key}
+          scope: GLOBAL
+          username: "jenkins"
 jenkins:
   securityRealm:
     github:
       clientID: "32a1d21f0de4e551cf80"
-      clientSecret: ""
+      clientSecret: "@@@@-client-secret-32a1d21f0de4e551cf80-@@@@"
       githubApiUri: "https://api.github.com"
       githubWebUri: "https://github.com"
       oauthScopes: "read:org,user:email,repo"
@@ -13,6 +25,7 @@ jenkins:
         - "Overall/Administer:xtp00001"
   remotingSecurity:
     enabled: true
+  numExecutors: 0
 security:
   queueItemAuthenticator:
     authenticators:
